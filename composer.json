@@ -1,0 +1,25 @@
+{
+    "name": "shankar/laravel-basic-setting",
+    "description": "Laravel Basic Setting Package with middleware, traits, and validation rules.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Shankar\\LaravelBasicSetting\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.0",
+        "illuminate/support": "^11.0|^12.0",
+        "livewire/livewire": "^3.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Shankar\\LaravelBasicSetting\\BasicSettingServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
