@@ -15,10 +15,6 @@ class HandleWithTransaction
     use ApiResponse;
     public function handle(Request $request, Closure $next)
     {
-        if ($request->isMethod('get')) {
-            return $next($request); // skip DB transaction
-        }
-
         DB::beginTransaction();
 
         $response = $next($request);
@@ -39,8 +35,6 @@ class HandleWithTransaction
                     ];
                     Log::error('Error :', $exception);
                     $response = $this->internalServerErrorResponse(exception: $exception);
-                } else {
-                    return back()->with('error', $response->exception->getMessage())->withInput();
                 }
             }
         } else {
