@@ -15,6 +15,9 @@ class HandleWithTransaction
     use ApiResponse;
     public function handle(Request $request, Closure $next)
     {
+        if ($request->isMethod('get')) {
+            return $next($request); // skip DB transaction
+        }
 
         DB::beginTransaction();
 
@@ -26,15 +29,19 @@ class HandleWithTransaction
                 }
             } else {
                 DB::rollBack();
-                $exception = [
-                    'action' => Route::currentRouteAction(),
-                    'url' => Route::current()->uri,
-                    'message' => $response->exception->getMessage(),
-                    'inputs' => $request->all(),
-                    'trace' => $response->exception->getTrace(),
-                ];
-                Log::error('Error :', $exception);
-                $response = $this->internalServerErrorResponse(exception: $exception);
+                if ($request->is('api/*')) {
+                    $exception = [
+                        'action' => Route::currentRouteAction(),
+                        'url' => Route::current()->uri,
+                        'message' => $response->exception->getMessage(),
+                        'inputs' => $request->all(),
+                        'trace' => $response->exception->getTrace(),
+                    ];
+                    Log::error('Error :', $exception);
+                    $response = $this->internalServerErrorResponse(exception: $exception);
+                } else {
+                    return back()->with('error', $response->exception->getMessage())->withInput();
+                }
             }
         } else {
             DB::commit();

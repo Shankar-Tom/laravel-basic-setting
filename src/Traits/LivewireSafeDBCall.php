@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-trait LivewireSafeCallTrait
+trait LivewireSafeDBCall
 {
     public function safeCall(callable $callback)
     {
