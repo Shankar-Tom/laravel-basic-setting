@@ -67,13 +67,13 @@ Post::search('keyword')->get();
 Post::searchRelation('keyword', ['user' => ['name', 'email']])->get();
 ```
 
-### LivewireSafeCallTrait
+### LivewireSafeDBCallTrait
 Use in Livewire components to safely wrap actions in transactions:
 ```php
-use Shankar\LaravelBasicSetting\Traits\LivewireSafeCallTrait;
+use Shankar\LaravelBasicSetting\Traits\LivewireSafeDBCall;
 
 class ExampleComponent extends Component {
-    use LivewireSafeCallTrait;
+    use LivewireSafeDBCall;
     // ...
 
     public function exampleAction()
@@ -91,6 +91,33 @@ class ExampleComponent extends Component {
     });
 </script>
 
+```
+
+### LivewireHandleResetTrait
+Use in Livewire components to reset properties:
+
+```php
+use Shankar\LaravelBasicSetting\Traits\LivewireHandleReset;
+use Shankar\LaravelBasicSetting\Attributes\Unresetable;
+
+class ExampleComponent extends Component {
+    use LivewireHandleReset;
+    // ...  
+    #[Unresetable]
+    public $property1;
+    public $property2;
+    
+    public function mount()
+    {
+        $this->property1 = 'value1';
+        $this->property2 = 'value2';
+    }
+
+    public function exampleAction()
+    {
+        $this->reset();  // reset only property2
+    }
+}
 ```
 
 ### HandleWithTransaction Middleware
