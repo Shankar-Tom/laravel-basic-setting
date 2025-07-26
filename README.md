@@ -31,6 +31,25 @@ use Shankar\LaravelBasicSetting\Traits\ApiResponse;
 class ExampleController extends Controller {
     use ApiResponse;
     // ...
+
+    public function exampleAction()
+    {
+        return $this->successResponse(data: 'Example data');
+    }
+    public function exampleErrorAction()
+    {
+        return $this->errorResponse(message: 'Example error');
+    }
+
+    public function exampleValidationErrorResponse()
+    {
+        return $this->validationErrorResponse(errors: 'Example validation error');
+    }
+
+    public function exampleInternalErrorResponse()
+    {
+        return $this->internalServerErrorResponse(exception: 'Example internal server error');
+    }
 }
 ```
 
@@ -64,10 +83,40 @@ class ExampleComponent extends Component {
         });
     }
 }
+
+// Usage in Blade:
+<script>
+    window.addEventListener('livewire-error', event => {
+        alert(event.detail.message);
+    });
+</script>
+
 ```
 
 ### HandleWithTransaction Middleware
 Publish and register the middleware to wrap requests in DB transactions (see Installation step 2).
+
+### Using in Routes
+
+Wrap a route or route group in the middleware to enable DB transactions for the entire request:
+```php
+use Shankar\LaravelBasicSetting\Middleware\HandleWithTransaction;
+
+Route::middleware(HandleWithTransaction::class)->group(function () {
+    // Your routes here
+});
+
+// To see the error in normal web (not API):
+// 1. Add `HandleWithTransaction` to `kernel.php` middleware array
+// 2. Add `HandleWithTransaction` to your route or route group
+
+
+// In Blade file
+
+@session('error')
+    <p>{{ $message }}</p>
+@endSession()
+```
 
 ### ValidPhone Rule
 Use in your form requests for phone validation:
