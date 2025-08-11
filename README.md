@@ -89,7 +89,9 @@ class ExampleComponent extends Component {
     window.addEventListener('livewire-error', event => {
         alert(event.detail.message);
     });
+    
 </script>
+
 
 ```
 
@@ -120,6 +122,30 @@ class ExampleComponent extends Component {
 }
 ```
 
+### LivewireHandleFormTrait
+Use in Livewire components to handle form submissions:
+
+```php
+use Shankar\LaravelBasicSetting\Traits\HandleLivewireForm;
+
+class ExampleComponent extends Component {
+    use HandleLivewireForm;
+    // ...
+
+    public function exampleAction()
+    {
+        // Your code here
+    }
+}
+
+// In bladefile 
+
+<form wire:submit.prevent="submit('exampleAction')">
+    // Your code here 
+</form>
+
+```
+
 ### HandleWithTransaction Middleware
 Publish and register the middleware to wrap requests in DB transactions (see Installation step 2).
 
@@ -132,6 +158,7 @@ use Shankar\LaravelBasicSetting\Middleware\HandleWithTransaction;
 Route::middleware(HandleWithTransaction::class)->group(function () {
     // Your routes here
 });
+// This middleware will wrap all the routes in a DB transaction and handle exceptions gracefully for your api routes. 
 
 // To see the error in normal web (not API):
 // 1. Add `HandleWithTransaction` to `kernel.php` middleware array

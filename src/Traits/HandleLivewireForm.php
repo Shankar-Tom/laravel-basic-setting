@@ -4,27 +4,25 @@ namespace Shankar\LaravelBasicSetting\Traits;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Throwable;
 
-trait LivewireSafeDBCall
+trait HandleLivewireForm
 {
-    public function safeCall(callable $callback)
+    public function submit($function)
     {
+
         try {
             DB::listen(function ($query) {
                 Log::info($query->toRawSql());
             });
-
-            return DB::transaction(fn() => $callback());
-        } catch (Throwable $e) {
-            Log::error($e->getMessage(), ['exception' => $e]);
+            DB::transaction(fn() => $this->$function());
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            session()->flash('error', $th->getMessage());
             $this->dispatch('livewire-error', [
                 'message' => app()->isProduction()
                     ? "Something went wrong"
-                    : $e->getMessage(),
+                    : $th->getMessage(),
             ]);
-
-            return null;
         }
     }
 }
