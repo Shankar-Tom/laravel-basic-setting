@@ -3,19 +3,16 @@
 namespace Shankar\LaravelBasicSetting;
 
 use Illuminate\Support\ServiceProvider;
+use Shankar\LaravelBasicSetting\Services\GlobalSearch;
 
 class BasicSettingServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        // Publish Middleware
-        $this->publishes([
-            __DIR__ . '/Middleware/HandleWithTransaction.php' => app_path('Http/Middleware/HandleWithTransaction.php'),
-        ], 'middleware');
+
+        $this->loadRoutesFrom(__DIR__ . '/Routes/web.php');
+        $this->app['router']->pushMiddlewareToGroup('web', \Shankar\LaravelBasicSetting\Middleware\InformMe::class);
     }
 
-    public function register()
-    {
-        //
-    }
+    public function register() {}
 }
