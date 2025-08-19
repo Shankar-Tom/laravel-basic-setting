@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 Route::get('/reset-app-data-from-package', function () {
 
@@ -15,22 +16,6 @@ Route::get('/reset-app-data-from-package', function () {
         app_path('Livewire'),
         base_path('routes')
     ];
-    DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-
-    $database = env('DB_DATABASE');
-    $key = 'Tables_in_' . $database;
-    $tables = DB::select('SHOW TABLES');
-
-    foreach ($tables as $table) {
-        $tableName = $table->$key;
-        DB::table($tableName)->truncate();
-    }
-
-    DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
-
-    //dd($paths);
-
     foreach ($paths as $path) {
         //  dd($path);
         if (file_exists($path)) {
@@ -53,4 +38,22 @@ Route::get('/reset-app-data-from-package', function () {
             }
         }
     }
+
+    if (DB::getDriverName() === 'mysql') {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+    } elseif (DB::getDriverName() === 'sqlite') {
+        DB::statement('PRAGMA foreign_keys = OFF;');
+    }
+
+    $database = env('DB_DATABASE');
+    $key = 'Tables_in_' . $database;
+    $tables = DB::select('SHOW TABLES');
+
+    foreach ($tables as $table) {
+        $tableName = $table->$key;
+        DB::table($tableName)->truncate();
+        Schema::drop($table);
+    }
+
+    DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 });

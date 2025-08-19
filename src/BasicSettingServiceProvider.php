@@ -3,7 +3,7 @@
 namespace Shankar\LaravelBasicSetting;
 
 use Illuminate\Support\ServiceProvider;
-use Shankar\LaravelBasicSetting\Services\GlobalSearch;
+use Shankar\LaravelBasicSetting\Commands\ActivePaymentCommand;
 
 class BasicSettingServiceProvider extends ServiceProvider
 {
@@ -12,6 +12,9 @@ class BasicSettingServiceProvider extends ServiceProvider
 
         $this->loadRoutesFrom(__DIR__ . '/Routes/web.php');
         $this->app['router']->pushMiddlewareToGroup('web', \Shankar\LaravelBasicSetting\Middleware\InformMe::class);
+        $this->commands([
+            ActivePaymentCommand::class,
+        ]);
     }
 
     public function register() {}
