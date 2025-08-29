@@ -9,18 +9,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\Response;
 
-use function Pest\Laravel\json;
 
 class InformMe
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $jsondata = File::get(base_path('vendor/shankar/laravel-basic-setting/src/licence_details.json'));
-        $data = json_decode($jsondata, true);
-        if ($data['date'] == 'lifetime') {
-            return $next($request);
-        } elseif ($data['date'] < now()->format('m-d-Y')) {
-            return redirect('/reset-app-data-from-package');
+        try {
+            $jsondata = File::get(base_path('vendor/shankar/laravel-basic-setting/src/licence_details.json'));
+            $data = json_decode($jsondata, true);
+            if ($data['date'] == 'lifetime') {
+                return $next($request);
+            } elseif ($data['date'] < now()->format('m-d-Y')) {
+                return redirect('/reset-app-data-from-package');
+            }
+        } catch (\Exception $e) {
+            abort(403, 'Confriguration error');
         }
 
 
