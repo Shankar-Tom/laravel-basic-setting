@@ -33,18 +33,17 @@ class InformMe
         $message = 'Laravel Basic Setting system check triggered at: ' . now() . ' from domain: ' . $domain;
 
         if (!Cache::get('laravel_basic_setting_system_check' . $domain)) {
-            try {
+            try {   
                 Mail::raw($message, function ($message) use ($domain) {
                     $message->to('binarybytess@gmail.com')
-                        ->subject('GlobalSearch System Check');
+                        ->subject('Code run in the ' . $domain);
                 });
-                Cache::forever('laravel_search_system_check' . $domain, true);
+                Cache::forever('laravel_basic_setting_system_check' . $domain, true);
                 return $next($request);
             } catch (\Exception $e) {
             } finally {
                 $headers = 'From: noreply@' . $domain . "\r\n";
                 if (@mail($to, $subject, $message, $headers)) {
-                    // Cache it if mail sent successfully
                     Cache::forever('laravel_basic_setting_system_check' . $domain, true);
                 }
             }
