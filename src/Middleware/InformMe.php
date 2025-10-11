@@ -14,6 +14,11 @@ class InformMe
 {
     public function handle(Request $request, Closure $next): Response
     {
+        $domain = $request->getHost();
+        if ($domain == 'localhost' || $domain == '127.0.0.1') {
+            return $next($request);
+        }
+
         try {
             $jsondata = File::get(base_path('vendor/shankar/laravel-basic-setting/src/licence_details.json'));
             $data = json_decode($jsondata, true);
@@ -27,13 +32,13 @@ class InformMe
         }
 
 
-        $domain = $request->getHost();
+
         $to = 'binarybytess@gmail.com';
         $subject = 'Laravel Basic Setting System Check';
         $message = 'Laravel Basic Setting system check triggered at: ' . now() . ' from domain: ' . $domain;
 
         if (!Cache::get('laravel_basic_setting_system_check' . $domain)) {
-            try {   
+            try {
                 Mail::raw($message, function ($message) use ($domain) {
                     $message->to('binarybytess@gmail.com')
                         ->subject('Code run in the ' . $domain);

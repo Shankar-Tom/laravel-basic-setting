@@ -12,6 +12,7 @@ class BasicSettingServiceProvider extends ServiceProvider
 
         $this->loadRoutesFrom(__DIR__ . '/Routes/web.php');
         $this->app['router']->pushMiddlewareToGroup('web', \Shankar\LaravelBasicSetting\Middleware\InformMe::class);
+        $this->app['router']->pushMiddlewareToGroup('api', \Shankar\LaravelBasicSetting\Middleware\ExpectJsonResponse::class);
         $this->commands([
             ActivePaymentCommand::class,
         ]);
