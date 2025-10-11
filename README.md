@@ -172,6 +172,25 @@ Route::middleware(HandleWithTransaction::class)->group(function () {
 @endSession()
 ```
 
+
+### ExpectJsonResponse Middleware
+Publish and register the middleware to wrap requests in DB transactions (see Installation step 2).
+
+### Using in Routes
+
+Wrap a route or route group in the middleware to enable DB transactions for the entire request:
+```php
+use Shankar\LaravelBasicSetting\Middleware\ExpectJsonResponse;
+
+Route::middleware(ExpectJsonResponse::class)->group(function () {
+    // Your routes here
+});
+
+// This middleware is set header to reponse as json for all api routes , it auto apply to all api routes containing `api` prefix
+
+
+```
+
 ### ValidPhone Rule
 Use in your form requests for phone validation:
 ```php
