@@ -10,7 +10,7 @@ trait CanSearch
             ->getSchemaBuilder()
             ->getColumnListing($this->getTable());
 
-        return $query->where(function ($query) use ($columns, $search) {
+        return $query->orWhere(function ($query) use ($columns, $search) {
             foreach ($columns as $column) {
                 $query->orWhere($column, 'LIKE', "%{$search}%");
             }
@@ -27,14 +27,12 @@ trait CanSearch
      */
     public function scopeSearchRelation($query, $search, array $relations)
     {
-        return $query->where(function ($query) use ($search, $relations) {
+        return $query->orWhere(function ($query) use ($search, $relations) {
             foreach ($relations as $relation => $fields) {
                 $query->orWhereHas($relation, function ($query) use ($fields, $search) {
-                    $query->where(function ($query) use ($fields, $search) {
-                        foreach ($fields as $field) {
-                            $query->orWhere($field, 'LIKE', "%{$search}%");
-                        }
-                    });
+                    foreach ($fields as $field) {
+                        $query->orWhere($field, 'LIKE', "%{$search}%");
+                    }
                 });
             }
         });
