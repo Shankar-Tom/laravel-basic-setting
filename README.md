@@ -65,7 +65,36 @@ class Post extends Model {
 // Usage:
 Post::search('keyword')->get();
 Post::searchRelation('keyword', ['user' => ['name', 'email']])->get();
+
 ```
+
+### Lockable Trait
+Use in your Eloquent models to add a simple lock/unlock feature:
+
+```php
+use Shankar\LaravelBasicSetting\Traits\Lockable;
+
+class Post extends Model {
+    use Lockable;
+}
+// In your controller
+
+public function editPost(Post $post)
+{
+    $post->acquireLock();
+
+    // your code 
+}
+
+public function updatePost(Post $post,Request $request)
+{
+    // your code for update
+    $post->save();
+    $post->releaseLock();
+}
+
+```
+
 
 ### LivewireSafeDBCallTrait
 Use in Livewire components to safely wrap actions in transactions:

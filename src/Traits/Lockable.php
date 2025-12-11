@@ -11,33 +11,20 @@ trait Lockable
     /**
      * Acquire a lock for this model.
      */
-    public function acquireLock(int $seconds = 300): bool
+    public function acquireLock(int $seconds = 600): bool
     {
         $lockName = $this->getLockName();
-
-        $this->currentLock = Cache::lock($lockName, $seconds);
-
-        // Try to acquire lock
-        return $this->currentLock->get();
+        if (!Cache::has($lockName)) {
+            Cache::put($lockName, true, $seconds);
+            return true;
+        }
+        return false;
     }
 
     // for checking if the lock exists or not 
     public function isLocked(): bool
     {
-        $lockName = $this->getLockName();
-
-        // Create a temporary lock object
-        $lock = Cache::lock($lockName, 1);
-
-        // Try to acquire the lock
-        if ($lock->get()) {
-            // If we can acquire it → lock was NOT held.
-            $lock->release();
-            return false;
-        }
-
-        // If we cannot acquire it → lock IS held by someone else.
-        return true;
+        return Cache::has($this->getLockName());
     }
 
     /**
@@ -45,9 +32,7 @@ trait Lockable
      */
     public function releaseLock(): void
     {
-        if ($this->currentLock) {
-            $this->currentLock->release();
-        }
+        Cache::forget($this->getLockName());
     }
 
     /**
